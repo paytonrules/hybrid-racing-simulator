@@ -6,4 +6,12 @@ edition = "2024"
 [dependencies]
 console_error_panic_hook = "0.1.7"
 wasm-bindgen = "0.2.108"
-web-sys = { version = "0.3.85", features = ["Window", "Document", "HtmlElement", "Text"] }
+web-sys = { version = "0.3.85", features = ["Window", "Document", "Element", "HtmlElement", "HtmlCanvasElement", "Performance", "Screen", "Navigator"] }
+wgpu = "24.0.1"
+winit = { version = "0.30.9", features = ["rwh_06"] }
+egui = { version = "0.31.0", default-features = false, features = ["default_fonts"] }
+egui-wgpu = { version = "0.31.0", default-features = false }
+egui-winit = { version = "0.31.0", default-features = false, features = ["links"] }
+wasm-bindgen-futures = "0.4"
+log = "0.4.26"
+console_log = "1.0.0"

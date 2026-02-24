@@ -2,9 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Hello World</title>
+  <title>Hybrid Racing Simulator</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #222;
+    }
+    canvas {
+      width: 90%;
+      height: 90%;
+      display: block;
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+  </style>
 </head>
 <body>
+  <div id="error-message" style="display: none; color: white; text-align: center; font-family: sans-serif; padding: 20px;">
+    <h1>Hardware Acceleration Required</h1>
+    <p>Your browser does not support WebGL or WebGPU, or hardware acceleration is disabled.</p>
+    <p>Please check your browser settings or try a different browser.</p>
+  </div>
+  <canvas id="canvas">
+    Your browser does not appear to support the HTML5 Canvas element.
+  </canvas>
+  <script>
+    (function() {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      const webgpu = !!navigator.gpu;
+      if (!gl && !webgpu) {
+        document.getElementById('error-message').style.display = 'block';
+        document.getElementById('canvas').style.display = 'none';
+      }
+    })();
+  </script>
 </body>
 </html>
 
