@@ -1,5 +1,5 @@
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 use winit::{
@@ -109,7 +109,9 @@ impl State {
     }
 
     fn input(&mut self, event: &WindowEvent) -> bool {
-        self.egui_state.on_window_event(&self.window, event).consumed
+        self.egui_state
+            .on_window_event(&self.window, event)
+            .consumed
     }
 
     fn update(&mut self) {}
@@ -145,7 +147,10 @@ impl State {
         self.egui_state
             .handle_platform_output(&self.window, full_output.platform_output);
 
-        let tris = self.egui_state.egui_ctx().tessellate(full_output.shapes, full_output.pixels_per_point);
+        let tris = self
+            .egui_state
+            .egui_ctx()
+            .tessellate(full_output.shapes, full_output.pixels_per_point);
 
         let screen_descriptor = egui_wgpu::ScreenDescriptor {
             size_in_pixels: [self.config.width, self.config.height],
@@ -196,7 +201,11 @@ impl State {
             self.egui_renderer.free_texture(id);
         }
 
-        self.queue.submit(internal_cmds.into_iter().chain(std::iter::once(encoder.finish())));
+        self.queue.submit(
+            internal_cmds
+                .into_iter()
+                .chain(std::iter::once(encoder.finish())),
+        );
         output.present();
 
         if self.first_render {
@@ -227,7 +236,7 @@ impl ApplicationHandler for App {
         }
 
         let window_attributes = Window::default_attributes().with_title("Hybrid Racing Simulator");
-        
+
         #[cfg(target_arch = "wasm32")]
         let window_attributes = {
             use winit::platform::web::WindowAttributesExtWebSys;
@@ -279,9 +288,14 @@ impl ApplicationHandler for App {
                     Err(wgpu::SurfaceError::OutOfMemory) => event_loop.exit(),
                     Err(e) => log::error!("Render error: {:?}", e),
                 }
-                state.window.request_redraw();
             }
             _ => (),
+        }
+    }
+
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
+        if let Some(state) = self.state.borrow().as_ref() {
+            state.window.request_redraw();
         }
     }
 }
