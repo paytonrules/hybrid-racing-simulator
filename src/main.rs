@@ -1,3 +1,4 @@
+use console_log::log;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
