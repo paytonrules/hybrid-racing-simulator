@@ -1,0 +1,42 @@
+/* BASE STYLES: This is for phones (Single Column) */
+.container {
+  display: grid;
+  grid-template-columns: 1fr; 
+  grid-template-areas: 
+    "header"
+    "left"
+    "right";
+  gap: 10px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ENHANCEMENT: This triggers for screens 600px and WIDER (Desktop) */
+@media (min-width: 600px) {
+  .container {
+    grid-template-columns: 1fr 1fr; 
+    grid-template-areas: 
+      "header header"
+      "left right";
+  }
+}
+
+header {
+  grid-area: header;
+  padding: 20px;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.left {
+  grid-area: left;
+  padding: 20px;
+}
+
+.right {
+  grid-area: right;
+  padding: 20px;
+}
