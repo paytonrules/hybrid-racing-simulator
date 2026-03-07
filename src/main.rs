@@ -25,11 +25,30 @@ fn Home() -> Element {
         document::Stylesheet { href: CSS }
         div { class: "container",
             header { "Hybrid Race Simulator" }
-            div { class: "left nes-container",
-                p { "left side" }
+            div { class: "left nes-container with-title",
+                p { class: "title", "Your Athlete" }
+                div { class: "nes-field",
+                    label { for: "name", "Name:" }
+                    input { id: "name", type: "text", class: "nes-input", placeholder: "Lauren Weeks" }
+                }
+                div { class: "nes-field",
+                    label { for: "fitness", "Fitness:" }
+                    input { id: "fitness", type: "numeric", class: "nes-input", placeholder: "From 0-80" }
+                }
+                p { class: "nes-text is-primary", "Fatigue: 0" }
+                p { class: "nes-text is-secondary", "PR: none" }
+                button { class: "nes-btn", "Save" }
+
             }
-            div { class: "right nes-container",
-                div { "The money" }
+            div { class: "right nes-container with-title",
+                p { class: "title", "Your  training this week" }
+                div { class: "nes-field",
+                    label { for: "hours", "Hours:" }
+                    input { id: "hours", type: "numeric", class: "nes-input", placeholder: "8" }
+                }
+
+                button { class: "nes-btn", "Train" }
+                button { class: "nes-btn", "Race!" }
             }
         }
     }
