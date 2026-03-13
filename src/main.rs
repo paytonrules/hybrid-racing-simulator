@@ -43,36 +43,73 @@ fn App() -> Element {
 }
 
 #[component]
+fn AthleteStats(mut athlete: Signal<Option<Athlete>>) -> Element {
+    let button_class = if athlete.read().is_none() {
+        "nes-btn"
+    } else {
+        "nes-btn is-disabled"
+    };
+
+    let fatigue = match athlete.read().as_ref() {
+        Some(athlete) => athlete.fatigue,
+        None => 0,
+    };
+
+    rsx! {
+        div { class: "left nes-container with-title",
+            p { class: "title", "Your Athlete" }
+            div { class: "nes-field", label { for: "name", "Name:" }
+                input { id: "name", r#type: "text", class: "nes-input", placeholder: "Lauren Weeks" }
+            }
+            div { class: "nes-field",
+                label { for: "fitness", "Fitness (0-80):" }
+                input { id: "fitness", r#type: "number", class: "nes-input", placeholder: "60", min: 0, max: 80 }
+            }
+            p { class: "nes-text is-secondary", "Fatigue: {fatigue}" }
+            p { class: "nes-text is-primary", "PR: none" }
+            button {
+                class: button_class,
+                onclick: move |_| athlete.set(Some( Athlete {
+                    fitness: 20,
+                    ..Default::default()
+                } ) ),
+                "Save"
+            }
+        }
+    }
+}
+
+#[component]
+fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
+    let modifier = if athlete.read().is_none() {
+        "is-disabled"
+    } else {
+        ""
+    };
+
+    rsx! {
+        div { class: "right nes-container with-title",
+            p { class: "title", "Your  training this week" }
+            div { class: "nes-field",
+                label { for: "hours", "Hours:" }
+                input { id: "hours", r#type: "number", class: "nes-input", min: "0", max: "24", placeholder: "8" }
+            }
+            button { class: format_args!("nes-btn {modifier}"), "Train" }
+            button { class: format_args!("nes-btn {modifier}"), "Race!" }
+        }
+    }
+}
+
+#[component]
 fn Home() -> Element {
+    let athlete: Signal<Option<Athlete>> = use_signal(|| None);
+
     rsx! {
         document::Stylesheet { href: CSS }
         div { class: "container",
             header { "Hybrid Race Simulator" }
-            div { class: "left nes-container with-title",
-                p { class: "title", "Your Athlete" }
-                div { class: "nes-field",
-                    label { for: "name", "Name:" }
-                    input { id: "name", r#type: "text", class: "nes-input", placeholder: "Lauren Weeks" }
-                }
-                div { class: "nes-field",
-                    label { for: "fitness", "Fitness (0-80):" }
-                    input { id: "fitness", r#type: "number", class: "nes-input", placeholder: "60", min: 0, max: 80 }
-                }
-                p { class: "nes-text is-secondary", "Fatigue: 0" }
-                p { class: "nes-text is-primary", "PR: none" }
-                button { class: "nes-btn", "Save" }
-
-            }
-            div { class: "right nes-container with-title",
-                p { class: "title", "Your  training this week" }
-                div { class: "nes-field",
-                    label { for: "hours", "Hours:" }
-                    input { id: "hours", r#type: "number", class: "nes-input", min: "0", max: "24", placeholder: "8" }
-                }
-
-                button { class: "nes-btn", "Train" }
-                button { class: "nes-btn", "Race!" }
-            }
+            AthleteStats { athlete: athlete }
+            Training { athlete: athlete }
         }
     }
 }
