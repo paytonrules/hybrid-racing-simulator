@@ -1,12 +1,9 @@
+mod athlete;
+mod athlete_draft;
+
+use athlete::{Athlete, MAX_FITNESS};
 use dioxus::prelude::*;
 
-#[derive(Default)]
-struct Athlete {
-    fatigue: i8,
-    fitness: u8,
-}
-
-const MAX_FITNESS: u8 = 80;
 // WR as of 3/7
 // Alex: 53:15 - 3195 seconds
 // Joanna: 56:03 - 3363 seconds
@@ -43,39 +40,82 @@ fn App() -> Element {
 }
 
 #[component]
-fn AthleteStats(mut athlete: Signal<Option<Athlete>>) -> Element {
-    let button_class = if athlete.read().is_none() {
+fn AthleteComponent(mut athlete: Signal<Option<Athlete>>) -> Element {
+    rsx! {
+        div { class: "left nes-container with-title",
+            p { class: "title", "Your Athlete" }
+            if let Some(created_athlete) = athlete.read().as_ref() {
+                AthleteStats { athlete: created_athlete.clone() }
+            } else {
+                AthleteCreator { athlete: athlete }
+            }
+        }
+    }
+}
+
+#[component]
+fn AthleteCreator(mut athlete: Signal<Option<Athlete>>) -> Element {
+    let mut draft = use_signal(|| athlete_draft::AthleteDraft::default());
+    let nes_btn_class = if Athlete::try_from(draft.read().clone()).is_ok() {
         "nes-btn"
     } else {
         "nes-btn is-disabled"
     };
 
-    let fatigue = match athlete.read().as_ref() {
-        Some(athlete) => athlete.fatigue,
-        None => 0,
-    };
-
     rsx! {
-        div { class: "left nes-container with-title",
-            p { class: "title", "Your Athlete" }
-            div { class: "nes-field", label { for: "name", "Name:" }
-                input { id: "name", r#type: "text", class: "nes-input", placeholder: "Lauren Weeks" }
+        form {
+            onsubmit: move |event| {
+                event.prevent_default();
+                athlete.set(Athlete::try_from(draft.read().clone()).ok());
+            },
+
+            div { class: "nes-field",
+                label { for: "name", "Name:" }
+                input {
+                    id: "name",
+                    r#type: "text",
+                    class: "nes-input",
+                    placeholder: "Lauren Weeks",
+                    oninput: move |e| draft.write().name = e.value()
+                }
             }
             div { class: "nes-field",
                 label { for: "fitness", "Fitness (0-80):" }
-                input { id: "fitness", r#type: "number", class: "nes-input", placeholder: "60", min: 0, max: 80 }
+                input {
+                    id: "fitness",
+                    r#type: "number",
+                    class: "nes-input",
+                    placeholder: "60",
+                    min: 0,
+                    max: 80,
+                    oninput: move |e| draft.write().fitness = e.value()
+                }
             }
-            p { class: "nes-text is-secondary", "Fatigue: {fatigue}" }
+            p { class: "nes-text is-secondary", "Fatigue: 0" }
             p { class: "nes-text is-primary", "PR: none" }
-            button {
-                class: button_class,
-                onclick: move |_| athlete.set(Some( Athlete {
-                    fitness: 20,
-                    ..Default::default()
-                } ) ),
-                "Save"
+            input {
+                class: nes_btn_class,
+                r#type: "submit",
+                value: "Save"
             }
         }
+    }
+}
+
+#[component]
+fn AthleteStats(athlete: Athlete) -> Element {
+    let fatigue = athlete.fatigue;
+
+    rsx! {
+        div { class: "nes-field", label { for: "name", "Name:" }
+            input { id: "name", r#type: "text", class: "nes-input", placeholder: "Lauren Week" }
+        }
+        div { class: "nes-field",
+            label { for: "fitness", "Fitness (0-80):" }
+            input { id: "fitness", r#type: "number", class: "nes-input", placeholder: "60", min: 0, max: 80 }
+        }
+        p { class: "nes-text is-secondary", "Fatigue: {fatigue}" }
+        p { class: "nes-text is-primary", "PR: none" }
     }
 }
 
@@ -89,7 +129,7 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
 
     rsx! {
         div { class: "right nes-container with-title",
-            p { class: "title", "Your  training this week" }
+            p { class: "title", "This Week" }
             div { class: "nes-field",
                 label { for: "hours", "Hours:" }
                 input { id: "hours", r#type: "number", class: "nes-input", min: "0", max: "24", placeholder: "8" }
@@ -108,7 +148,7 @@ fn Home() -> Element {
         document::Stylesheet { href: CSS }
         div { class: "container",
             header { "Hybrid Race Simulator" }
-            AthleteStats { athlete: athlete }
+            AthleteComponent { athlete: athlete }
             Training { athlete: athlete }
         }
     }
