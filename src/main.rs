@@ -91,8 +91,6 @@ fn AthleteCreator(mut athlete: Signal<Option<Athlete>>) -> Element {
                     oninput: move |e| draft.write().fitness = e.value()
                 }
             }
-            p { class: "nes-text is-secondary", "Fatigue: 0" }
-            p { class: "nes-text is-primary", "PR: none" }
             input {
                 class: nes_btn_class,
                 r#type: "submit",
@@ -104,18 +102,11 @@ fn AthleteCreator(mut athlete: Signal<Option<Athlete>>) -> Element {
 
 #[component]
 fn AthleteStats(athlete: Athlete) -> Element {
-    let fatigue = athlete.fatigue;
-
     rsx! {
-        div { class: "nes-field", label { for: "name", "Name:" }
-            input { id: "name", r#type: "text", class: "nes-input", placeholder: "Lauren Week" }
-        }
-        div { class: "nes-field",
-            label { for: "fitness", "Fitness (0-80):" }
-            input { id: "fitness", r#type: "number", class: "nes-input", placeholder: "60", min: 0, max: 80 }
-        }
-        p { class: "nes-text is-secondary", "Fatigue: {fatigue}" }
-        p { class: "nes-text is-primary", "PR: none" }
+        p { id: "name", "Name: {athlete.name}"}
+        p { id: "fitness", "Fitness: {athlete.fitness}"}
+        p { class: "nes-text is-secondary", "Fatigue: {athlete.fatigue}" }
+        p { class: "nes-text is-primary", "PR: {athlete.pr}" }
     }
 }
 
@@ -134,8 +125,17 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
                 label { for: "hours", "Hours:" }
                 input { id: "hours", r#type: "number", class: "nes-input", min: "0", max: "24", placeholder: "8" }
             }
-            button { class: format_args!("nes-btn {modifier}"), "Train" }
-            button { class: format_args!("nes-btn {modifier}"), "Race!" }
+            button {
+                class: format_args!("nes-btn {modifier}"),
+                "Train"
+            }
+            button {
+                class: format_args!("nes-btn {modifier}"),
+                onclick: move |_evt| {
+                    athlete.write().as_mut().map(|athlete| athlete.pr = race(athlete));
+                },
+                "Race!"
+            }
         }
     }
 }
