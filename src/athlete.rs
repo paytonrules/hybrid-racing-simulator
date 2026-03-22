@@ -3,7 +3,7 @@ pub const MAX_FITNESS: u8 = 80;
 #[derive(Default, Clone, PartialEq)]
 pub struct Athlete {
     pub name: String,
-    pub fatigue: i8,
+    pub fatigue: u8,
     pub fitness: u8,
     pub races: Vec<u16>,
 }

@@ -6,6 +6,7 @@ use crate::athlete::{Athlete, MAX_FITNESS};
 const MALE_WORLD_RECORD: u16 = 3180;
 const MALE_SLOWEST_POSSIBLE_TIME: u16 = MALE_WORLD_RECORD * 3;
 const MALE_RANGE: u16 = MALE_SLOWEST_POSSIBLE_TIME - MALE_WORLD_RECORD;
+const RACE_FATIGUE: u8 = 10;
 
 pub fn race(athlete: &Athlete) -> Athlete {
     let mut raced_athlete = athlete.clone();
@@ -17,6 +18,7 @@ pub fn race(athlete: &Athlete) -> Athlete {
     let race_time = (slow_time - ((fitness * range) / max_fitness)) as u16;
 
     raced_athlete.races.push(race_time);
+    raced_athlete.fatigue += RACE_FATIGUE;
 
     raced_athlete
 }
@@ -74,5 +76,17 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn racing_should_increase_fatigue() {
+        let athlete = Athlete {
+            fatigue: 3,
+            ..Default::default()
+        };
+
+        let new_athlete = race(&athlete);
+
+        assert_eq!(new_athlete.fatigue, RACE_FATIGUE + 3);
     }
 }
