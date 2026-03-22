@@ -118,7 +118,7 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
             button {
                 class: format_args!("nes-btn {modifier}"),
                 onclick: move |_evt| {
-                    athlete.write().as_mut().map(|athlete| athlete.log_race(race(athlete)));
+                    athlete.write().as_mut().map(|athlete| *athlete = race(athlete));
                 },
                 "Race!"
             }
