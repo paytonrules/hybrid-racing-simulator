@@ -118,7 +118,10 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
             button {
                 class: format_args!("nes-btn {modifier}"),
                 onclick: move |_evt| {
-                    athlete.write().as_mut().map(|athlete| *athlete = race(athlete));
+                    if let Some(current) = athlete.cloned() {
+                        let next_version = race(&current);
+                        athlete.set(Some(next_version));
+                    }
                 },
                 "Race!"
             }
