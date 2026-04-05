@@ -22,15 +22,6 @@ impl Athlete {
 
         // Range is really 255 -255
         let diff_squared: u16 = diff.unsigned_abs() * diff.unsigned_abs();
-        println!("diff_squared: {diff_squared}");
-        /*
-        let adjustment: i32 = if diff > 0 {
-            (diff_squared + FITNESS_FUNCTION_CONSTANT as u16) as i32
-        } else {
-            -((diff_squared + FITNESS_FUNCTION_CONSTANT as u16) as i32)
-        };
-        println!("adjustment: {adjustment}");*/
-
         let adjustment: i32 = (diff_squared + FITNESS_FUNCTION_CONSTANT as u16) as i32;
         println!("adjustment: {adjustment}");
         if diff < 0 {
@@ -40,10 +31,6 @@ impl Athlete {
         }
 
         trained_athlete
-    }
-
-    pub fn log_race(&mut self, time: u16) {
-        self.races.push(time);
     }
 
     pub fn pr(&self) -> String {
@@ -135,11 +122,4 @@ mod tests {
         // Load increase is exponential (3 squared)
         assert_eq!(new_athlete.fitness, 50 - FITNESS_FUNCTION_CONSTANT - 9);
     }
-
-    // You want exponential growth, and exponential decline as training goes down
-    // It should probably be worse as you go - so one week of 0 training wiill reduce fitness some,
-    // two weeks more than 2x, three weeks well more than 3x, you get the idea. It should compound.
-    // On the flip side - maintaining volume with no changes should plateau (may be irrelevent once
-    // you start changing "stimuli")
-    // Gemini mentioned I might want to do something logarithmic instead of squared
 }
