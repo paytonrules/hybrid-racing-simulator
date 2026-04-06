@@ -1,3 +1,5 @@
+use crate::race;
+
 pub const MAX_FITNESS: u8 = 80;
 const STARTING_HOURS: u8 = 5; // The 'crossfit' athlete goes to class 4-5 times a week. 
 const FITNESS_FUNCTION_CONSTANT: u8 = 1;
@@ -31,6 +33,25 @@ impl Athlete {
         }
 
         trained_athlete
+    }
+
+    pub fn log_race(&mut self, time: u16) {
+        self.races.push(time);
+    }
+
+    pub fn race(&self) -> Athlete {
+        let mut raced_athlete = self.clone();
+        let fitness = u32::from(self.fitness);
+        let slow_time = u32::from(race::MALE_SLOWEST_POSSIBLE_TIME);
+        let range = u32::from(race::MALE_RANGE);
+        let max_fitness = u32::from(MAX_FITNESS);
+
+        let race_time = (slow_time - ((fitness * range) / max_fitness)) as u16;
+
+        raced_athlete.log_race(race_time);
+        raced_athlete.fatigue += race::RACE_FATIGUE;
+
+        raced_athlete
     }
 
     pub fn pr(&self) -> String {
@@ -121,5 +142,68 @@ mod tests {
 
         // Load increase is exponential (3 squared)
         assert_eq!(new_athlete.fitness, 50 - FITNESS_FUNCTION_CONSTANT - 9);
+    }
+
+    #[test]
+    fn it_should_race_wr_time_if_fitness_is_maxed_and_fatigue_is_zero() -> Result<(), &'static str>
+    {
+        let athlete = Athlete {
+            fitness: MAX_FITNESS,
+            ..Default::default()
+        };
+
+        let new_athlete = athlete.race();
+
+        assert_eq!(
+            *new_athlete.races.last().ok_or("No Races Stored")?,
+            race::MALE_WORLD_RECORD
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn it_should_take_slowest_time_if_fitness_is_min_and_fatigue_is_zero()
+    -> Result<(), &'static str> {
+        let athlete = Athlete::default();
+
+        let new_athlete = athlete.race();
+
+        assert_eq!(
+            *new_athlete.races.last().ok_or("No Races Stored")?,
+            race::MALE_SLOWEST_POSSIBLE_TIME
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn it_should_take_the_halfway_point_if_fitness_is_forty_and_fatigue_is_zero()
+    -> Result<(), &'static str> {
+        let athlete = Athlete {
+            fitness: MAX_FITNESS / 2,
+            ..Default::default()
+        };
+
+        let new_athlete = athlete.race();
+
+        assert_eq!(
+            *new_athlete.races.last().ok_or("No Races Stored")?,
+            (race::MALE_SLOWEST_POSSIBLE_TIME + race::MALE_WORLD_RECORD) / 2
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn racing_should_increase_fatigue() {
+        let athlete = Athlete {
+            fatigue: 3,
+            ..Default::default()
+        };
+
+        let new_athlete = athlete.race();
+
+        assert_eq!(new_athlete.fatigue, race::RACE_FATIGUE + 3);
     }
 }

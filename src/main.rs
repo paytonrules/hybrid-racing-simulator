@@ -4,7 +4,6 @@ mod race;
 
 use athlete::Athlete;
 use dioxus::prelude::*;
-use race::race;
 
 static CSS: Asset = asset!("/assets/main.css");
 
@@ -134,7 +133,7 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
                 class: format_args!("nes-btn {modifier}"),
                 onclick: move |_evt| {
                     if let Some(current) = athlete.cloned() {
-                        let next_version = race(&current);
+                        let next_version = current.race();
                         athlete.set(Some(next_version));
                     }
                 },
