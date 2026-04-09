@@ -1,5 +1,6 @@
 mod athlete;
 mod athlete_draft;
+mod game;
 mod race;
 
 use athlete::Athlete;

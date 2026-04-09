@@ -1,8 +1,12 @@
 use crate::race;
 
+// TODO: Setting to u8 is probably silly, because WebAssembly is going to treat them as a 32 anyway
+// and because I'm using them in calculations as 32. What I may want to do is create a more
+// Domain-Driven approach where the types for the Athlete constrain their actual ranges, and then
+// write some 'into' traits
 pub const MAX_FITNESS: u8 = 80;
-const STARTING_HOURS: u8 = 5; // The 'crossfit' athlete goes to class 4-5 times a week. 
-const FITNESS_FUNCTION_CONSTANT: u8 = 1;
+pub const STARTING_HOURS: u8 = 5; // The 'crossfit' athlete goes to class 4-5 times a week. 
+pub const FITNESS_FUNCTION_CONSTANT: u8 = 1;
 
 #[derive(Default, Clone, PartialEq)]
 pub struct Athlete {
@@ -16,16 +20,11 @@ impl Athlete {
     pub fn train(&self, time: u8) -> Athlete {
         let mut trained_athlete = self.clone();
 
-        // Running into weirdness on u8/i16 and I'm being dumb about it.
-        // Training is clamped from 0-80 (so u8 is fine)
-        // Time - old time
-        // Can be negative, so i16 (i8 is too small)
         let diff: i16 = i16::from(time) - i16::from(STARTING_HOURS);
 
         // Range is really 255 -255
         let diff_squared: u16 = diff.unsigned_abs() * diff.unsigned_abs();
         let adjustment: i32 = (diff_squared + FITNESS_FUNCTION_CONSTANT as u16) as i32;
-        println!("adjustment: {adjustment}");
         if diff < 0 {
             trained_athlete.fitness -= adjustment as u8;
         } else {
@@ -33,10 +32,6 @@ impl Athlete {
         }
 
         trained_athlete
-    }
-
-    pub fn log_race(&mut self, time: u16) {
-        self.races.push(time);
     }
 
     pub fn race(&self) -> Athlete {
@@ -61,6 +56,10 @@ impl Athlete {
         let seconds = pr % 60;
 
         format!("{hours}:{minutes:02}:{seconds:02}")
+    }
+
+    fn log_race(&mut self, time: u16) {
+        self.races.push(time);
     }
 }
 
