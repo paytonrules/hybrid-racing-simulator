@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Install cargo-binstall
-        run: curl -L https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tar.gz | tar xz && sudo mv cargo-binstall /usr/local/bin/
+        run: cargo install cargo-binstall
 
       - name: Install Dioxus CLI
         run: cargo binstall -y dx
