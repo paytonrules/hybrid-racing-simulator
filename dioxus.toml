@@ -1,0 +1,3 @@
+[web.app]
+name = "hybrid-racing-simulator"
+base_path = "hybrid-racing-simulator"
