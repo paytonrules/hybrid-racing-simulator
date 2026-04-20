@@ -31,7 +31,7 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Install Dioxus CLI
-        run: cargo binstall -y dx
+        run: cargo binstall -y dioxus-cli
 
       - name: Build Web App
         run: dx bundle --web --release --debug-symbols=false
