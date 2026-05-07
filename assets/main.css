@@ -4,7 +4,7 @@
   grid-template-columns: 1fr; 
   grid-template-areas: 
     "header"
-    "left"
+    "lefty"
     "right";
   gap: 10px;
   max-width: 1100px;
