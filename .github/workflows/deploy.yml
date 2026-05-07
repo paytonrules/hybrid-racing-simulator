@@ -33,10 +33,10 @@ jobs:
         run: cargo binstall -y dioxus-cli
 
       - name: Build Web App
-        run: 
-          - dx bundle --out-dir docs --web --release --debug-symbols=false
-          - mv docs/public/* docs
-          - cp docs/index.html docs/404.html
+        run: |
+          dx bundle --out-dir docs --web --release --debug-symbols=false
+          mv docs/public/* docs
+          cp docs/index.html docs/404.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
