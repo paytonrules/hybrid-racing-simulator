@@ -1,8 +1,8 @@
 use crate::athlete::{Athlete, FITNESS_FUNCTION_CONSTANT, STARTING_HOURS};
 
 #[derive(Default)]
-struct Game {
-    athlete: Athlete,
+pub struct Game {
+    pub athlete: Athlete,
 }
 
 impl Game {

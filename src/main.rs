@@ -5,6 +5,7 @@ mod race;
 
 use athlete::Athlete;
 use dioxus::prelude::*;
+use game::Game;
 
 static CSS: Asset = asset!("/assets/main.css");
 
@@ -109,7 +110,7 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
     rsx! {
         div { class: "right nes-container with-title",
             p { class: "title", "This Week" }
-            div { class: "nes-field",
+            div { class: format_args!("nes-field {modifier}"),
                 label { for: "hours", "Hours:" }
                 input { id: "hours",
                         r#type: "number",
@@ -134,8 +135,9 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
                 class: format_args!("nes-btn {modifier}"),
                 onclick: move |_evt| {
                     if let Some(current) = athlete.cloned() {
-                        let next_version = current.race();
-                        athlete.set(Some(next_version));
+                        let mut game = Game::new(current);
+                        game.race_week(training_hours());
+                        athlete.set(Some(game.athlete));
                     }
                 },
                 "Race!"
