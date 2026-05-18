@@ -108,42 +108,42 @@ fn Training(mut athlete: Signal<Option<Athlete>>) -> Element {
     let mut training_hours = use_signal(|| 0);
 
     rsx! {
-        div { class: "right nes-container with-title",
-            p { class: "title", "This Week" }
-            div { class: format_args!("nes-field {modifier}"),
-                label { for: "hours", "Hours:" }
-                input { id: "hours",
-                        r#type: "number",
-                        class: "nes-input",
-                        min: "0",
-                        max: "24",
-                        placeholder: "5",
-                        oninput: move |evt| training_hours.set(evt.value().parse::<u8>().unwrap_or(0))
+            div { class: "right nes-container with-title",
+                p { class: "title", "This Week" }
+                div { class: format_args!("nes-field {modifier}"),
+                    label { for: "hours", "Hours:" }
+                    input { id: "hours",
+                            r#type: "number",
+                            class: "nes-input",
+                            min: "0",
+                            max: "24",
+                            placeholder: "5",
+                            oninput: move |evt| training_hours.set(evt.value().parse::<u8>().unwrap_or(0))
+                    }
+                }
+                button {
+                    class: format_args!("nes-btn {modifier}"),
+                    onclick: move |_evt| {
+                        if let Some(current) = athlete.cloned() {
+                            let next_version = current.train(training_hours());
+                            athlete.set(Some(next_version));
+                        }
+                    },
+                    "Train"
+                }
+                button {
+                    class: format_args!("nes-btn {modifier}"),
+                    onclick: move |_evt| {
+                        if let Some(current) = athlete.cloned() {
+                            let current = current.race();
+    //                        game.race_week(training_hours());
+                            athlete.set(Some(current));
+                        }
+                    },
+                    "Race!"
                 }
             }
-            button {
-                class: format_args!("nes-btn {modifier}"),
-                onclick: move |_evt| {
-                    if let Some(current) = athlete.cloned() {
-                        let next_version = current.train(training_hours());
-                        athlete.set(Some(next_version));
-                    }
-                },
-                "Train"
-            }
-            button {
-                class: format_args!("nes-btn {modifier}"),
-                onclick: move |_evt| {
-                    if let Some(current) = athlete.cloned() {
-                        let mut game = Game::new(current);
-                        game.race_week(training_hours());
-                        athlete.set(Some(game.athlete));
-                    }
-                },
-                "Race!"
-            }
         }
-    }
 }
 
 #[component]
