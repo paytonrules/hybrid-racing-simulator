@@ -159,3 +159,30 @@ fn Home() -> Element {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::Home;
+    use dioxus::prelude::*;
+    use dioxus_ssr;
+
+    #[test]
+    fn home_page_renders_without_error() {
+        let mut dom = VirtualDom::new(Home);
+        dom.rebuild_in_place();
+        let html = dioxus_ssr::render(&dom);
+
+        assert!(
+            html.contains("Hybrid Race Simulator"),
+            "Home page should contain the app title"
+        );
+        assert!(
+            html.contains("Your Athlete"),
+            "Home page should contain the athlete section"
+        );
+        assert!(
+            html.contains("This Week"),
+            "Home page should contain the training section"
+        );
+    }
+}
